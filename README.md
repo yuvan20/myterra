@@ -1,2 +1,1 @@
-# myterra
-my-terraform-code
+# Terraform AWS Project with Jenkins

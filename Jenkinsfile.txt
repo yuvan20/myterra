@@ -1,0 +1,47 @@
+pipeline {
+    agent any
+ 
+    parameters {
+        choice(
+            name: 'ACTION',
+            choices: ['plan', 'apply'],
+            description: 'Terraform Action'
+        )
+    }
+ 
+    stages {
+ 
+        stage('Checkout Code') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/your-org/terraform-aws-project.git'
+            }
+        }
+ 
+        stage('Terraform Init') {
+            steps {
+                dir('envs/dev') {
+                    sh 'terraform init'
+                }
+            }
+        }
+ 
+        stage('Terraform Plan') {
+            when { expression { params.ACTION == 'plan' } }
+            steps {
+                dir('envs/dev') {
+                    sh 'terraform plan'
+                }
+            }
+        }
+ 
+        stage('Terraform Apply') {
+            when { expression { params.ACTION == 'apply' } }
+            steps {
+                dir('envs/dev') {
+                    sh 'terraform apply -auto-approve'
+                }
+            }
+        }
+    }
+}
